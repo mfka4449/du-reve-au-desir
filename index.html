@@ -1,1 +1,145 @@
 
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Du Rêve au Désir</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0b090a;
+            color: #f8f9fa;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+            width: 100%;
+            max-width: 400px;
+        }
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            color: #d8b4fe;
+            margin-bottom: 40px;
+            font-style: italic;
+            letter-spacing: 1px;
+            cursor: pointer; /* Indice discret : cliquer 3 fois ici ouvre l'admin */
+        }
+        .score-box {
+            font-size: 90px;
+            font-weight: 600;
+            color: #ffffff;
+            margin: 20px 0;
+            text-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+        }
+        .admin-panel {
+            display: none;
+            margin-top: 40px;
+            background: #161216;
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid #4c1d95;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .admin-panel.active {
+            display: block;
+        }
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        button {
+            background-color: #6b21a8;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: 'Poppins', sans-serif;
+        }
+        button:active {
+            transform: scale(0.95);
+            background-color: #581c87;
+        }
+        .hint {
+            font-size: 11px;
+            color: #6b7280;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- En cliquant 3 fois de suite sur le titre, l'interface admin s'ouvrira -->
+        <h1 onclick="gererClicTitre()">Du Rêve au Désir</h1>
+        
+        <div class="score-box" id="scoreDisplay">...</div>
+
+        <!-- Panneau administrateur (caché par défaut) -->
+        <div class="admin-panel" id="adminPanel">
+            <p style="color: #d8b4fe; margin-top:0; font-size:14px;">Mode Gestion Admin</p>
+            <div class="btn-group">
+                <button onclick="changerScore(-1)">-</button>
+                <button onclick="changerScore(1)">+</button>
+            </div>
+        </div>
+
+        <div class="hint">Appuyez 3 fois sur le titre pour vous connecter</div>
+    </div>
+
+    <script>
+        // Utilisation d'un stockage en ligne partagé ultra-simple via l'API JSONBin publique de test
+        const BIN_URL = 'https://api.jsonbin.io/v3/b/65f29d91dc74654018b082bb'; // Stockage partagé
+        // Note: Pour que ce soit 100% personnel, on utilise le localStorage partagé sur l'appareil ou une sync simple.
+        // Faisons au plus simple et robuste pour débuter : stockage local partagé par lien.
+        
+        let score = localStorage.getItem('reve_desir_score') ? parseInt(localStorage.getItem('reve_desir_score')) : 0;
+        
+        function mettreAJourAffichage() {
+            document.getElementById('scoreDisplay').innerText = score;
+        }
+
+        function changerScore(valeur) {
+            score += valeur;
+            localStorage.setItem('reve_desir_score', score);
+            mettreAJourAffichage();
+        }
+
+        // Compteur de clics sur le titre pour ouvrir l'admin secrètement
+        let clicsTitre = 0;
+        function gererClicTitre() {
+            clicsTitre++;
+            if (clicsTitre >= 3) {
+                document.getElementById('adminPanel').classList.toggle('active');
+                clicsTitre = 0;
+            }
+        }
+
+        mettreAJourAffichage();
+        
+        // Actualisation automatique toutes les 2 secondes au cas où
+        setInterval(() => {
+            let scoreActuel = localStorage.getItem('reve_desir_score') ? parseInt(localStorage.getItem('reve_desir_score')) : 0;
+            if (scoreActuel !== score) {
+                score = scoreActuel;
+                mettreAJourAffichage();
+            }
+        }, 1000);
+    </script>
+
+</body>
+</html>
